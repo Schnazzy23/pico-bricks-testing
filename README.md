@@ -35,7 +35,7 @@ docs/
   test-log.md
 ```
 
-These folders are a suggested layout; this repository currently starts with this README.
+The weather-station and fan experiments use the folders described below.
 
 ## Experiment notes
 
@@ -64,4 +64,30 @@ Disconnect power before changing wiring, and verify voltage requirements and pin
 
 ## Project status
 
-Repository initialized. Hardware experiments and results will be added as testing progresses.
+The weather-station experiment includes a local dashboard with temperature, humidity,
+heat index, saved history, graph tooltips, and authenticated Auto / On / Off relay
+controls. Low-temperature indicators are blue at 16 degrees Celsius and below.
+
+See [Weather station setup](experiments/weather-station/README.md) for instructions.
+The relay helper is in [fan_starter.py](experiments/fan/fan_starter.py).
+
+## Private configuration
+
+Copy `experiments/weather-station/pico_config.example.py` to `pico_config.py`,
+fill it privately, and save it alongside `main.py` on the Pico. Never commit the
+filled configuration. Server upload and control keys come from environment variables.
+Databases, logs, private configs, and preview data are excluded by `.gitignore`.
+
+The webserver remains a trusted-LAN/private-VPN prototype, not a public internet
+service. Relay state reports the Pico output, not physical fan-speed feedback.
+
+## Checks
+
+From the repository root:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+Pico tests use simulated hardware and do not actuate a real relay.
+

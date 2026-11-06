@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f4f5ef">
+<title>W.S — Weather station</title>
+<style>
+/* Quiet, instrument-like panels follow the structure of the reference sketch. */
+:root{--paper:#f4f5ef;--panel:#fff;--ink:#20392e;--muted:#68746b;--line:#dfe5da;--green:#366549;--accent:#e6eddc;--red:#c74735;--yellow:#efc44e;--blue:#668d9d}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:1.5}
+button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button:focus-visible,input:focus-visible{outline:3px solid #87a794;outline-offset:4px}
+main{max-width:1120px;margin:0 auto;padding:48px 40px 24px}.masthead{display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;gap:20px}.brand{display:flex;gap:18px;align-items:center}.monogram{font-family:Georgia,serif;font-size:36px;letter-spacing:-3px;border-right:1px solid #cbd4c6;padding-right:22px;line-height:1.2}.eyebrow{margin:0 0 5px;font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--muted)}h1{font-size:19px;font-weight:500;letter-spacing:-.5px;margin:0}h2{font-size:19px;letter-spacing:-.5px;font-weight:500;margin:0}p{margin:0}.connection{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--muted)}.connection-mark{width:6px;height:6px;border-radius:50%;background:#707970}.connection.live .connection-mark{background:var(--green)}
+.station{border:1px solid var(--line);background:#eef1e7;padding:24px;border-radius:20px}.section-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}.section-heading .eyebrow{margin:0}.device-tag{font-family:monospace;font-size:10px;color:var(--muted);letter-spacing:.7px}.readings{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.reading{padding:24px;background:var(--panel);border:1px solid var(--line);border-radius:12px;min-width:0}.reading-header{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:12px}.icon{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}.reading-value{font-size:51px;letter-spacing:-2.5px;font-weight:400;line-height:1.2;margin:23px 0 13px;font-variant-numeric:tabular-nums}.unit{font-size:22px;letter-spacing:-1px;color:#849080;margin-left:6px}.reading-note{font-size:11px;color:var(--muted)}
+.fan-panel{margin-top:16px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:24px}.fan-top{display:flex;justify-content:space-between;align-items:center;gap:20px}.fan-title{display:flex;align-items:center;gap:13px}.fan-icon{background:#eff3eb;border-radius:10px;padding:10px;width:42px;height:42px}.fan-subtitle{font-size:12px;color:var(--muted);margin-top:3px}.mode-control{display:flex;border:1px solid var(--line);background:#f6f7f2;padding:4px;border-radius:9px;gap:4px}.mode-control button{border:0;border-radius:6px;color:var(--muted);background:transparent;padding:8px 21px;font-size:12px;min-width:60px}.mode-control button[aria-pressed="true"]{background:var(--ink);color:white;box-shadow:0 1px 3px #20392e22}.fan-bottom{border-top:1px solid #ecf0e7;margin-top:22px;padding-top:17px;display:flex;align-items:center;justify-content:space-between;gap:15px}.sensor-state{display:flex;align-items:center;gap:9px;min-height:22px;font-size:12px;color:var(--muted)}.indicator{display:inline-block;width:13px;height:13px;border-radius:50%;background:#000;flex-shrink:0}.indicator.red{background:var(--red);box-shadow:0 0 0 4px #c747350d}.indicator.yellow{background:var(--yellow);box-shadow:0 0 0 4px #efc44e15}.indicator.blue{background:#397dcc;box-shadow:0 0 0 4px #397dcc0d}.fan-feedback{font-size:11px;color:var(--muted)}.text-button{border:0;background:transparent;color:var(--green);padding:0;font-size:11px;text-decoration:underline;text-underline-offset:3px}.control-actions{display:flex;gap:12px;align-items:center}.control-help{font-size:11px;color:var(--muted);margin-top:13px}.control-help:empty{display:none}
+.history{margin-top:28px;border:1px solid var(--line);border-radius:16px;background:white;padding:26px}.history-head{display:flex;align-items:center;justify-content:space-between;gap:20px}.history-title .eyebrow{margin-bottom:4px}.ranges{display:flex;gap:4px}.ranges button{border:0;border-radius:5px;background:transparent;color:var(--muted);font-size:11px;padding:6px 11px}.ranges button[aria-pressed="true"]{background:#edf1e6;color:var(--ink)}.chart-toolbar{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);margin-top:21px;gap:10px}.metrics{display:flex;gap:22px}.metrics button{padding:0 0 12px;border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);font-size:12px}.metrics button[aria-pressed="true"]{border-bottom-color:var(--green);color:var(--ink)}.chart-caption{color:var(--muted);font-size:10px;padding-bottom:12px}.plot{position:relative;margin-top:20px;min-height:235px}.plot svg{display:block;width:100%;height:235px;overflow:visible}.empty-chart{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px;background:#ffffffd9;color:var(--muted);font-size:12px}.empty-chart strong{font-weight:500;color:var(--ink);font-size:15px}.empty-chart[hidden]{display:none}.graph-summary{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;gap:10px;border-top:1px solid #edf0e9;padding-top:13px;margin-top:12px}.footer{display:flex;justify-content:space-between;padding:22px 2px;font-size:10px;color:var(--muted);gap:16px}.footer span:last-child{text-align:right}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+dialog{border:1px solid var(--line);border-radius:16px;max-width:400px;width:calc(100% - 40px);padding:28px;color:var(--ink);box-shadow:0 20px 100px #20392e26}dialog::backdrop{background:#20392e55;backdrop-filter:blur(3px)}dialog p{font-size:13px;color:var(--muted);margin:12px 0 20px}dialog label{display:block;font-size:12px;margin-bottom:8px}dialog input{width:100%;padding:11px;border:1px solid #ccd5c7;border-radius:7px}dialog .dialog-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px}dialog button{border:1px solid var(--line);border-radius:6px;background:white;padding:9px 14px;font-size:12px}dialog button[type="submit"]{background:var(--ink);color:white}dialog .error{color:#a8382b;font-size:12px;margin-top:12px}
+@media(max-width:700px){main{padding:25px 18px 12px}.masthead{margin-bottom:25px}.monogram{font-size:30px;padding-right:16px}.brand{gap:13px}h1{font-size:16px}.connection{font-size:10px}.station{padding:14px}.reading{padding:17px 12px}.reading-value{font-size:36px;letter-spacing:-1.7px;margin:18px 0 10px}.unit{font-size:16px;margin-left:3px}.reading-header{font-size:10px}.reading-note{font-size:9px}.readings{gap:8px}.icon{width:17px;height:17px}.fan-panel{padding:18px}.fan-top{align-items:flex-start;flex-direction:column}.mode-control{width:100%}.mode-control button{flex:1}.fan-bottom{align-items:flex-start}.fan-feedback{max-width:180px}.history{padding:20px 16px;margin-top:20px}.metrics{gap:14px}.metrics button{font-size:11px}.chart-caption{display:none}.ranges button{padding:6px 8px}.device-tag{font-size:9px}.history-head h2{font-size:18px}.footer{font-size:9px}.control-actions{flex-shrink:0}.graph-summary{font-size:9px}}
+@media(max-width:390px){.connection{max-width:90px}.reading-value{font-size:29px}.reading-header .icon{display:none}.reading-note{font-size:8px}.brand .eyebrow{font-size:8px}.fan-feedback{max-width:130px}}
+@media(prefers-reduced-motion:no-preference){button{transition:background .15s,color .15s}.indicator{transition:background .3s}}
+</style>
+<style>
+/* Keep the tooltip within the plot and let pointer events reach the graph. */
+.chart-tooltip{position:absolute;z-index:2;pointer-events:none;background:var(--ink);
+color:white;padding:10px 13px;border-radius:8px;box-shadow:0 5px 20px #20392e25;
+font-size:12px;line-height:1.5;max-width:calc(100% - 8px)}
+.chart-tooltip strong{display:block;font-weight:500}
+.chart-tooltip time{display:block;color:#d8e3d9;font-size:10px}
+.chart-tooltip[hidden],.chart-hover[hidden]{display:none}
+.chart-help{font-size:10px;color:var(--muted);margin-top:8px}
+#chart:focus-visible{outline:2px solid #87a794;outline-offset:4px;border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+  <header class="masthead">
+    <div class="brand"><div class="monogram" aria-hidden="true">W.S</div><div><p class="eyebrow">PicoBricks / Local station</p><h1>A little closer to your climate.</h1></div></div>
+    <div id="connection" class="connection"><span class="connection-mark"></span><span id="connection-text">Connecting</span></div>
+  </header>
+  <section class="station" aria-label="Live readings and fan controls">
+    <div class="section-heading"><p class="eyebrow">The room, right now</p><span class="device-tag">PICO W · SHTC3</span></div>
+    <div class="readings">
+      <article class="reading"><div class="reading-header"><span>Temperature</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14.5V5a3 3 0 0 1 6 0v9.5a5 5 0 1 1-6 0Z"/><path d="M12 8v10"/></svg></div><p class="reading-value"><span id="temperature">--</span><span class="unit">°C</span></p><p class="reading-note">Ambient temperature</p></article>
+      <article class="reading"><div class="reading-header"><span>Humidity</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s-7 8-7 12a7 7 0 0 0 14 0c0-4-7-12-7-12Z"/><path d="M9 15a3 3 0 0 0 3 3"/></svg></div><p class="reading-value"><span id="humidity">--</span><span class="unit">%</span></p><p class="reading-note">Relative humidity</p></article>
+      <article class="reading"><div class="reading-header"><span>Heat index</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></div><p class="reading-value"><span id="heat_index">--</span><span class="unit">°C</span></p><p class="reading-note">Feels-like temperature</p></article>
+    </div>
+    <section class="fan-panel" aria-labelledby="fan-heading">
+      <div class="fan-top"><div class="fan-title"><svg class="icon fan-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M10 10C4 8 7 1 11 3c2 1 2 4 1 7m2 1c5-4 9 2 6 5-2 2-5 0-7-2m-2 0c1 6-6 7-7 3-1-3 3-5 6-5"/></svg><div><h2 id="fan-heading">Fan controls</h2><p class="fan-subtitle" id="fan-state">Waiting for relay status</p></div></div>
+        <div class="mode-control" role="group" aria-label="Fan mode"><button data-mode="auto" aria-pressed="true" disabled>Auto</button><button data-mode="on" aria-pressed="false" disabled>On</button><button data-mode="off" aria-pressed="false" disabled>Off</button></div>
+      </div>
+      <div class="fan-bottom"><div><div class="sensor-state"><span id="indicator" class="indicator" role="img" aria-label="Waiting for data"></span><span id="waiting-label">Waiting for data</span></div><p id="fan-feedback" class="fan-feedback" aria-live="polite">Auto follows temperature or the Pico button.</p></div><div class="control-actions"><button class="text-button" id="unlock">Unlock controls</button><button class="text-button" id="lock" hidden>Lock controls</button></div></div>
+      <p id="control-help" class="control-help"></p>
+    </section>
+  </section>
+  <section class="history" aria-labelledby="history-heading">
+    <div class="history-head"><div class="history-title"><p class="eyebrow">A little perspective</p><h2 id="history-heading">Climate history</h2></div><div class="ranges" role="group" aria-label="History time range"><button data-hours="1" aria-pressed="false">1h</button><button data-hours="6" aria-pressed="true">6h</button><button data-hours="24" aria-pressed="false">24h</button></div></div>
+    <div class="chart-toolbar"><div class="metrics" role="group" aria-label="Graph measurement"><button data-metric="temperature" aria-pressed="true">Temperature</button><button data-metric="humidity" aria-pressed="false">Humidity</button><button data-metric="heat_index" aria-pressed="false">Heat index</button></div><span id="chart-unit" class="chart-caption">DEGREES CELSIUS</span></div>
+    <div class="plot"><svg id="chart" viewBox="0 0 960 235" role="img" tabindex="0" aria-label="Temperature history" aria-describedby="chart-help chart-tooltip"><title>Temperature history</title></svg><div id="empty-chart" class="empty-chart"><strong>Your climate story starts here.</strong><span>Readings will appear as the Pico sends them.</span></div><div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden><strong id="tooltip-value"></strong><time id="tooltip-time"></time></div></div>
+    <p id="chart-help" class="chart-help">Hover or tap to inspect a reading · Arrow keys to explore</p>
+    <div class="graph-summary"><span id="graph-summary">No readings in this window</span><span id="graph-updated">Saved locally on this computer</span></div>
+  </section>
+  <footer class="footer"><span>W.S / YOUR EVERYDAY ATMOSPHERE</span><span id="updated">Waiting for the first reading</span></footer>
+</main>
+<dialog id="key-dialog" aria-labelledby="key-heading"><form id="key-form"><h2 id="key-heading">Fan control key</h2><p>Enter your control key to change the fan mode. It is kept only in this page until you lock it or close the page.</p><label for="control-key">Control key</label><input id="control-key" type="password" autocomplete="off" required><p id="key-error" class="error" role="alert" hidden></p><div class="dialog-actions"><button type="button" id="cancel-key">Cancel</button><button type="submit">Unlock</button></div></form></dialog>
+<script>
+// All readings come from this local server. No external scripts, fonts, or services.
+const $ = id => document.getElementById(id);
+const metricNames = {temperature:'Temperature',humidity:'Humidity',heat_index:'Heat index'};
+let hours=6, metric='temperature', snapshot=null, controlKey='', busy=false, refreshing=false;
+let serverReachable=false;
+// Remember the inspected point across the automatic three-second refresh.
+let chartData=null, chartPointer=null, chartFocusTime=null;
+
+function isFresh(reading){
+  return !!reading && Date.now()-Date.parse(reading.received_at) <= (snapshot?.fresh_seconds || 60)*1000;
+}
+function setIndicator(temperature){
+  const valid=Number.isFinite(temperature);
+  const color=!valid?'black':temperature>=24?'red':temperature>16?'yellow':'blue';
+  $('indicator').className='indicator '+color;
+  $('indicator').setAttribute('aria-label',!valid?'Waiting for data':color+' temperature indicator');
+  $('waiting-label').hidden=valid;
+}
+function render(){
+  const reading=snapshot?.latest, fresh=serverReachable&&isFresh(reading);
+  ['temperature','humidity','heat_index'].forEach(key=>{
+    $(''+key).textContent=Number.isFinite(reading?.[key])?reading[key].toFixed(1):'--';
+  });
+  setIndicator(fresh?reading.temperature:null);
+  $('connection').className='connection'+(fresh?' live':'');
+  $('connection-text').textContent=snapshot?.preview?'Preview · sample data':!serverReachable?'Server offline':fresh?'Station connected':reading?'Station offline':'Waiting for station';
+  $('updated').textContent=reading?(fresh?'Updated ':'Last reading ')+new Date(reading.received_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'}):'Waiting for the first reading';
+  const stateKnown=fresh&&typeof reading?.fan_on==='boolean';
+  $('fan-state').textContent=!fresh?'Waiting for relay status':!stateKnown?'Relay status not reported':reading.fan_on?'Relay on':'Relay off';
+  const capable=stateKnown&&['auto','on','off'].includes(reading.applied_mode);
+  document.querySelectorAll('[data-mode]').forEach(button=>{
+    button.setAttribute('aria-pressed',String(button.dataset.mode===(snapshot?.requested_mode||'auto')));
+    button.disabled=busy||!controlKey||!snapshot?.controls_enabled||!capable;
+  });
+  $('unlock').hidden=!!controlKey||!snapshot?.controls_enabled;
+  $('lock').hidden=!controlKey;
+  $('control-help').textContent=!snapshot?.controls_enabled?'Fan control is not configured on the server.':fresh&&!capable?'Update the Pico program to enable relay control.':'';
+  if(!fresh) $('fan-feedback').textContent='Waiting for the Pico to reconnect.';
+  else if(!capable) $('fan-feedback').textContent='Live readings are available; relay status is not yet available.';
+  else if(reading.applied_mode!==snapshot.requested_mode) $('fan-feedback').textContent='Pending · waiting for Pico confirmation';
+  else $('fan-feedback').textContent=reading.applied_mode==='auto'?'Auto · on at 24°C or while the Pico button is pressed.':reading.applied_mode==='on'?'Manual on · switch to Auto to resume automatic control.':'Manual off · switch to Auto to resume automatic control.';
+  drawChart();
+}
+
+// SVG keeps the graph sharp at any screen size and works without a chart library.
+function drawChart(){
+  chartData=null;
+  const svg=$('chart'), records=(snapshot?.history||[]).filter(r=>Number.isFinite(r[metric]));
+  const name=metricNames[metric], unit=metric==='humidity'?'%':'°C';
+  $('chart-unit').textContent=metric==='humidity'?'RELATIVE HUMIDITY':'DEGREES CELSIUS';
+  svg.setAttribute('aria-label',name+' history over the last '+hours+' hours');
+  $('empty-chart').hidden=records.length>0;
+  // Match the drawing width to its container so tick labels stay legible on phones.
+  const width=Math.max(280,Math.round(svg.clientWidth)), height=235, left=35, right=16, top=12, bottom=28;
+  svg.setAttribute('viewBox','0 0 '+width+' '+height);
+  const plotW=width-left-right, plotH=height-top-bottom;
+  let low=0,high=metric==='humidity'?100:40;
+  if(records.length){
+    low=Math.floor(Math.min(...records.map(r=>r[metric]))-1);
+    high=Math.ceil(Math.max(...records.map(r=>r[metric]))+1);
+    if(metric==='humidity'){low=Math.max(0,low);high=Math.min(100,high);}
+    if(high-low<4){low-=1;high+=1;}
+  }
+  const end=Date.now(), start=end-hours*3600000;
+  const x=r=>left+(Date.parse(r.received_at)-start)/(end-start)*plotW;
+  const y=r=>top+(high-r[metric])/(high-low)*plotH;
+  let content='<title>'+name+' history</title>';
+  for(let i=0;i<5;i++){
+    const yy=top+plotH*i/4,value=high-(high-low)*i/4;
+    content+='<line x1="'+left+'" x2="'+(width-right)+'" y1="'+yy+'" y2="'+yy+'" stroke="#e9ede5" stroke-dasharray="3 5"/>';
+    content+='<text x="'+(left-12)+'" y="'+(yy+4)+'" text-anchor="end" fill="#7d887c" font-size="10" font-family="Arial">'+value.toFixed(0)+'</text>';
+  }
+  for(let i=0;i<5;i++){
+    const xx=left+plotW*i/4, time=new Date(start+(end-start)*i/4).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    content+='<text x="'+xx+'" y="'+(height-5)+'" text-anchor="'+(i===0?'start':i===4?'end':'middle')+'" fill="#7d887c" font-size="10" font-family="Arial">'+time+'</text>';
+  }
+  if(records.length){
+    // Bound SVG complexity for a full day's history, preserving the last reading.
+    const step=Math.max(1,Math.ceil(records.length/360));
+    const points=records.filter((r,i)=>i%step===0||i===records.length-1);
+    let path='', previous=null;
+    points.forEach(r=>{
+      // Leave gaps when the Pico stopped sending instead of drawing through outages.
+      const gap=previous&&Date.parse(r.received_at)-Date.parse(previous.received_at)>Math.max(90000,step*45000);
+      path+=(previous&&!gap?' L':' M')+x(r).toFixed(2)+' '+y(r).toFixed(2);
+      previous=r;
+    });
+    const color=metric==='humidity'?'#668d9d':metric==='heat_index'?'#b48a48':'#366549';
+    chartData={points,x,y,width,height,left,top,plotW,plotH,color,step};
+    content+='<path d="'+path+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>';
+    const last=records[records.length-1];
+    content+='<circle cx="'+x(last).toFixed(2)+'" cy="'+y(last).toFixed(2)+'" r="4" fill="'+color+'" stroke="white" stroke-width="2"/>';
+    const values=records.map(r=>r[metric]), min=Math.min(...values),max=Math.max(...values),avg=values.reduce((a,b)=>a+b,0)/values.length;
+    $('graph-summary').textContent='Min '+min.toFixed(1)+unit+'   /   Avg '+avg.toFixed(1)+unit+'   /   Max '+max.toFixed(1)+unit;
+    $('graph-updated').textContent=records.length+' readings · last '+hours+'h';
+  }else{
+    $('graph-summary').textContent='No readings in this window';
+    $('graph-updated').textContent='Saved locally on this computer';
+  }
+  content+='<g id="chart-hover" class="chart-hover" pointer-events="none" hidden><line id="hover-line" stroke="#a0b09f" stroke-dasharray="3 4"/><circle id="hover-point" r="5" stroke="white" stroke-width="2"/></g>';
+  svg.innerHTML=content;
+  if(chartPointer) inspectPointer(chartPointer);
+  else if(chartFocusTime!==null&&chartData){
+    const nearest=chartData.points.reduce((a,b)=>Math.abs(Date.parse(a.received_at)-chartFocusTime)<=Math.abs(Date.parse(b.received_at)-chartFocusTime)?a:b);
+    showChartReading(nearest);
+  }else hideChartTooltip();
+}
+
+function hideChartTooltip(){
+  $('chart-tooltip').hidden=true;
+  $('chart-hover')?.setAttribute('hidden','');
+}
+function showChartReading(reading){
+  if(!chartData){hideChartTooltip();return;}
+  const d=chartData, px=d.x(reading), py=d.y(reading);
+  if(px<d.left||px>d.left+d.plotW){hideChartTooltip();return;}
+  $('tooltip-value').textContent=metricNames[metric]+': '+reading[metric].toFixed(1)+(metric==='humidity'?' %':' °C');
+  $('tooltip-time').textContent=new Date(reading.received_at).toLocaleString([],{
+    month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  $('tooltip-time').dateTime=reading.received_at;
+  $('chart-tooltip').hidden=false;
+  $('chart-hover').removeAttribute('hidden');
+  const line=$('hover-line'), point=$('hover-point');
+  line.setAttribute('x1',px);line.setAttribute('x2',px);
+  line.setAttribute('y1',d.top);line.setAttribute('y2',d.top+d.plotH);
+  point.setAttribute('cx',px);point.setAttribute('cy',py);point.setAttribute('fill',d.color);
+  // Convert SVG coordinates to page pixels, then keep the tooltip inside the plot.
+  const plotRect=$('chart').parentElement.getBoundingClientRect(), tip=$('chart-tooltip');
+  const marker=new DOMPoint(px,py).matrixTransform($('chart').getScreenCTM());
+  const markerX=marker.x-plotRect.left, markerY=marker.y-plotRect.top;
+  tip.style.left=Math.max(4,Math.min(markerX+12,plotRect.width-tip.offsetWidth-4))+'px';
+  tip.style.top=Math.max(0,Math.min(markerY-tip.offsetHeight-12,plotRect.height-tip.offsetHeight))+'px';
+}
+function inspectPointer(position){
+  if(!chartData){hideChartTooltip();return;}
+  const d=chartData, svg=$('chart');
+  // Invert the SVG transform to allow for scaling and letterboxing on phones.
+  const matrix=svg.getScreenCTM();
+  if(!matrix){hideChartTooltip();return;}
+  const location=new DOMPoint(position.x,position.y).matrixTransform(matrix.inverse());
+  if(location.x<d.left||location.x>d.left+d.plotW||location.y<d.top||location.y>d.top+d.plotH){hideChartTooltip();return;}
+  const nearest=d.points.reduce((a,b)=>Math.abs(d.x(a)-location.x)<=Math.abs(d.x(b)-location.x)?a:b);
+  // Do not imply there is a reading in a long outage or an empty time window.
+  const timeDistance=Math.abs(d.x(nearest)-location.x)/d.plotW*hours*3600000;
+  if(timeDistance>Math.max(90000,d.step*45000)){hideChartTooltip();return;}
+  showChartReading(nearest);
+}
+$('chart').addEventListener('pointermove',event=>{
+  chartPointer={x:event.clientX,y:event.clientY};chartFocusTime=null;
+  inspectPointer(chartPointer);
+});
+$('chart').addEventListener('pointerdown',event=>{
+  chartPointer={x:event.clientX,y:event.clientY};chartFocusTime=null;
+  inspectPointer(chartPointer);
+});
+$('chart').addEventListener('pointerleave',event=>{
+  // A touch pointer leaves on finger lift; keep the tapped reading visible.
+  if(event.pointerType==='touch')return;
+  chartPointer=null;hideChartTooltip();
+});
+$('chart').addEventListener('pointercancel',()=>{chartPointer=null;hideChartTooltip();});
+$('chart').addEventListener('keydown',event=>{
+  if(event.key==='Escape'){chartPointer=null;chartFocusTime=null;hideChartTooltip();return;}
+  if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)||!chartData)return;
+  event.preventDefault();chartPointer=null;
+  const points=chartData.points;
+  let index=chartFocusTime===null?points.length-1:points.reduce((best,r,i)=>
+    Math.abs(Date.parse(r.received_at)-chartFocusTime)<Math.abs(Date.parse(points[best].received_at)-chartFocusTime)?i:best,0);
+  if(event.key==='Home')index=0;
+  else if(event.key==='End')index=points.length-1;
+  else if(chartFocusTime!==null)index=Math.max(0,Math.min(points.length-1,index+(event.key==='ArrowRight'?1:-1)));
+  chartFocusTime=Date.parse(points[index].received_at);showChartReading(points[index]);
+});
+$('chart').addEventListener('blur',()=>{chartFocusTime=null;chartPointer=null;hideChartTooltip();});
+document.addEventListener('pointerdown',event=>{
+  if(event.target.closest('#chart'))return;
+  chartPointer=null;chartFocusTime=null;hideChartTooltip();
+});
+async function refresh(){
+  if(refreshing)return;
+  refreshing=true;
+  const requestedHours=hours;
+  try{
+    const response=await fetch('/api/dashboard?hours='+requestedHours,{cache:'no-store',signal:AbortSignal.timeout(8000)});
+    if(!response.ok)throw Error('Server unavailable');
+    const data=await response.json();
+    if(requestedHours===hours){snapshot=data;serverReachable=true;render();}
+  }catch(error){serverReachable=false;render();}
+  finally{refreshing=false;}
+}
+async function sendMode(mode){
+  if(busy)return;
+  busy=true;render();
+  try{
+    const response=await fetch('/api/fan',{method:'POST',headers:{'Content-Type':'application/json','X-Control-Token':controlKey},body:JSON.stringify({mode}),signal:AbortSignal.timeout(8000)});
+    if(response.status===401){controlKey='';throw Error('Incorrect control key. Unlock controls to try again.');}
+    const result=await response.json();
+    if(!response.ok)throw Error(result.error||'Command was not accepted.');
+    snapshot.requested_mode=result.requested_mode;
+    $('key-dialog').close();$('control-key').value='';
+    render();
+  }catch(error){
+    if($('key-dialog').open){$('key-error').hidden=false;$('key-error').textContent=error.message;}
+    else $('fan-feedback').textContent=error.message;
+  }finally{busy=false;renderButtons();}
+}
+// Update buttons without overwriting a command error message.
+function renderButtons(){
+  const capable=serverReachable&&isFresh(snapshot?.latest)&&typeof snapshot?.latest?.fan_on==='boolean'&&['auto','on','off'].includes(snapshot?.latest?.applied_mode);
+  document.querySelectorAll('[data-mode]').forEach(b=>b.disabled=busy||!controlKey||!snapshot?.controls_enabled||!capable);
+  $('unlock').hidden=!!controlKey||!snapshot?.controls_enabled;$('lock').hidden=!controlKey;
+}
+document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>sendMode(b.dataset.mode)));
+document.querySelectorAll('[data-hours]').forEach(b=>b.addEventListener('click',()=>{
+  hours=Number(b.dataset.hours);
+  document.querySelectorAll('[data-hours]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  refresh();
+}));
+document.querySelectorAll('[data-metric]').forEach(b=>b.addEventListener('click',()=>{
+  metric=b.dataset.metric;
+  document.querySelectorAll('[data-metric]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+  drawChart();
+}));
+$('unlock').addEventListener('click',()=>{$('key-error').hidden=true;$('key-dialog').showModal();});
+$('cancel-key').addEventListener('click',()=>{$('key-dialog').close();$('control-key').value='';});
+$('key-dialog').addEventListener('cancel',()=>{$('control-key').value='';});
+$('key-form').addEventListener('submit',event=>{
+  event.preventDefault();controlKey=$('control-key').value.trim();
+  if(!controlKey)return;
+  // Validate the key by re-submitting the existing mode; unlocking doesn't switch the fan.
+  sendMode(snapshot?.requested_mode||'auto');
+});
+$('lock').addEventListener('click',()=>{controlKey='';render();});
+render();refresh();setInterval(refresh,3000);
+</script>
+</body>
+</html>
