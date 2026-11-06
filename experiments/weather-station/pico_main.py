@@ -14,6 +14,8 @@ import requests  # Send HTTP requests to the computer's webserver.
 WIFI_NAME = 'YOUR_WIFI_NAME'
 WIFI_PASSWORD = 'YOUR_WIFI_PASSWORD'
 SERVER_URL = 'http://192.168.1.1:8080/api/readings'  # Use your computer's LAN IP
+
+# run 'python3 -c "import secrets; print(secrets.token_hex(32))"' to get the UPLOAD_TOKEN
 # Use the same secret as PICO_UPLOAD_TOKEN on the computer. Do not share it.
 UPLOAD_TOKEN = 'PASTE_YOUR_RANDOM_TOKEN_HERE'
 
